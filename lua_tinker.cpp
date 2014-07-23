@@ -537,6 +537,8 @@ lua_tinker::table lua_tinker::pop(lua_State *L)
 /*---------------------------------------------------------------------------*/ 
 /* Tinker Class Helper                                                       */ 
 /*---------------------------------------------------------------------------*/ 
+namespace lua_tinker
+{
 static void invoke_parent(lua_State *L)
 {
 	lua_pushstring(L, "__parent");
@@ -545,17 +547,24 @@ static void invoke_parent(lua_State *L)
 	{
 		lua_pushvalue(L,2);
 		lua_rawget(L, -2);
-		if(!lua_isnil(L,-1))
+		if(lua_isuserdata(L,-1))
 		{
-			lua_remove(L,-2);
+		  user2type<var_base*>::invoke(L,-1)->get(L);
+		  lua_remove(L, -2);
 		}
-		else
+		else if(lua_isnil(L,-1))
 		{
 			lua_remove(L, -1);
 			invoke_parent(L);
-			lua_remove(L,-2);
 		}
+		lua_remove(L,-2);
 	}
+	else if(!lua_isnil(L,-1))
+	{
+		lua_pushfstring(L, "find '__parent' class variable. (nonsupport registering such class variable.)");
+		lua_error(L);
+	}
+}
 }
 
 /*---------------------------------------------------------------------------*/ 
