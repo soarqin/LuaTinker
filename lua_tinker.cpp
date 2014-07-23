@@ -577,13 +577,7 @@ static void parent_meta_set(lua_State *L)
 		{
 			user2type<var_base*>::invoke(L,-1)->set(L);
 		}
-		else if(!lua_isnil(L,-1))
-		{
-			lua_pushvalue(L,2);
-			lua_pushvalue(L,3);
-			lua_rawset(L, -4);
-		}
-		else
+		else if(lua_isnil(L,-1))
 		{
 			lua_remove(L, -1);
 			parent_meta_set(L);
@@ -636,22 +630,21 @@ int lua_tinker::meta_set(lua_State *L)
 	{
 		user2type<var_base*>::invoke(L,-1)->set(L);
 	}
-	else if(!lua_isnil(L,-1))
-	{
-		lua_pushvalue(L,2);
-		lua_pushvalue(L,3);
-		lua_rawset(L, -4);
-	}
-	else
+	else if(lua_isnil(L,-1))
 	{
 		lua_remove(L, -1);
 		parent_meta_set(L);
-		if(lua_isnil(L,-1))
-		{
-			lua_pushvalue(L,2);
-			lua_pushvalue(L,3);
-			lua_rawset(L, -4);
-		}
+	}
+
+	if(lua_isnil(L,-1))
+	{
+		lua_pushfstring(L, "can't find '%s' class variable. (forgot registering class variable ?)", lua_tostring(L, 2));
+		lua_error(L);
+	}
+	else if(!lua_isuserdata(L,-1))
+	{
+		lua_pushfstring(L, "find '%s' class variable. (why is not userdata type ?)", lua_tostring(L, 2));
+		lua_error(L);
 	}
 
 	lua_settop(L, 3);
