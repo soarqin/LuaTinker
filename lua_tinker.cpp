@@ -539,7 +539,7 @@ lua_tinker::table lua_tinker::pop(lua_State *L)
 /*---------------------------------------------------------------------------*/ 
 namespace lua_tinker
 {
-static void invoke_parent(lua_State *L)
+static void parent_meta_get(lua_State *L)
 {
 	lua_pushstring(L, "__parent");
 	lua_rawget(L, -2);
@@ -549,15 +549,45 @@ static void invoke_parent(lua_State *L)
 		lua_rawget(L, -2);
 		if(lua_isuserdata(L,-1))
 		{
-		  user2type<var_base*>::invoke(L,-1)->get(L);
-		  lua_remove(L, -2);
+			user2type<var_base*>::invoke(L,-1)->get(L);
+			lua_remove(L, -2);
 		}
 		else if(lua_isnil(L,-1))
 		{
 			lua_remove(L, -1);
-			invoke_parent(L);
+			parent_meta_get(L);
 		}
 		lua_remove(L,-2);
+	}
+	else if(!lua_isnil(L,-1))
+	{
+		lua_pushfstring(L, "find '__parent' class variable. (nonsupport registering such class variable.)");
+		lua_error(L);
+	}
+}
+static void parent_meta_set(lua_State *L)
+{
+	lua_pushstring(L, "__parent");
+	lua_rawget(L, -2);
+	if(lua_istable(L,-1))
+	{
+		lua_pushvalue(L,2);
+		lua_rawget(L, -2);
+		if(lua_isuserdata(L,-1))
+		{
+			user2type<var_base*>::invoke(L,-1)->set(L);
+		}
+		else if(!lua_isnil(L,-1))
+		{
+			lua_pushvalue(L,2);
+			lua_pushvalue(L,3);
+			lua_rawset(L, -4);
+		}
+		else
+		{
+			lua_remove(L, -1);
+			parent_meta_set(L);
+		}
 	}
 	else if(!lua_isnil(L,-1))
 	{
@@ -582,7 +612,7 @@ int lua_tinker::meta_get(lua_State *L)
 	else if(lua_isnil(L,-1))
 	{
 		lua_remove(L,-1);
-		invoke_parent(L);
+		parent_meta_get(L);
 		if(lua_isnil(L,-1))
 		{
 			lua_pushfstring(L, "can't find '%s' class variable. (forgot registering class variable ?)", lua_tostring(L, 2));
@@ -606,13 +636,26 @@ int lua_tinker::meta_set(lua_State *L)
 	{
 		user2type<var_base*>::invoke(L,-1)->set(L);
 	}
-	else if(lua_isnil(L, -1))
+	else if(!lua_isnil(L,-1))
 	{
 		lua_pushvalue(L,2);
 		lua_pushvalue(L,3);
 		lua_rawset(L, -4);
 	}
+	else
+	{
+		lua_remove(L, -1);
+		parent_meta_set(L);
+		if(lua_isnil(L,-1))
+		{
+			lua_pushvalue(L,2);
+			lua_pushvalue(L,3);
+			lua_rawset(L, -4);
+		}
+	}
+
 	lua_settop(L, 3);
+
 	return 0;
 }
 
