@@ -684,26 +684,23 @@ namespace lua_tinker
 	template<typename F> 
 	void def(lua_State* L, const char* name, F func)
 	{ 
-		lua_pushstring(L, name);
 		lua_pushlightuserdata(L, (void*)func);
 		push_functor(L, func);
-		lua_settable(L, LUA_GLOBALSINDEX);
+		lua_setglobal(L, name);
 	}
 
 	// global variable
 	template<typename T>
 	void set(lua_State* L, const char* name, T object)
 	{
-		lua_pushstring(L, name);
 		push(L, object);
-		lua_settable(L, LUA_GLOBALSINDEX);
+		lua_setglobal(L, name);
 	}
 
 	template<typename T>
 	T get(lua_State* L, const char* name)
 	{
-		lua_pushstring(L, name);
-		lua_gettable(L, LUA_GLOBALSINDEX);
+		lua_getglobal(L, name);
 		return pop<T>(L);
 	}
 
@@ -720,9 +717,7 @@ namespace lua_tinker
 		lua_pushcclosure(L, on_error, 0);
 		int errfunc = lua_gettop(L);
 
-		lua_pushstring(L, name);
-		lua_gettable(L, LUA_GLOBALSINDEX);
-
+		lua_getglobal(L, name);
 		if(lua_isfunction(L,-1))
 		{
 			lua_pcall(L, 0, 1, errfunc);
@@ -742,8 +737,7 @@ namespace lua_tinker
 		lua_pushcclosure(L, on_error, 0);
 		int errfunc = lua_gettop(L);
 
-		lua_pushstring(L, name);
-		lua_gettable(L, LUA_GLOBALSINDEX);
+		lua_getglobal(L, name);
 		if(lua_isfunction(L,-1))
 		{
 			push(L, arg);
@@ -764,8 +758,7 @@ namespace lua_tinker
 		lua_pushcclosure(L, on_error, 0);
 		int errfunc = lua_gettop(L);
 
-		lua_pushstring(L, name);
-		lua_gettable(L, LUA_GLOBALSINDEX);
+		lua_getglobal(L, name);
 		if(lua_isfunction(L,-1))
 		{
 			push(L, arg1);
@@ -787,8 +780,7 @@ namespace lua_tinker
 		lua_pushcclosure(L, on_error, 0);
 		int errfunc = lua_gettop(L);
 
-		lua_pushstring(L, name);
-		lua_gettable(L, LUA_GLOBALSINDEX);
+		lua_getglobal(L, name);
 		if(lua_isfunction(L,-1))
 		{
 			push(L, arg1);
@@ -816,7 +808,6 @@ namespace lua_tinker
 	{ 
 		class_name<T>::name(name);
 
-		lua_pushstring(L, name);
 		lua_newtable(L);
 
 		lua_pushstring(L, "__name");
@@ -835,7 +826,7 @@ namespace lua_tinker
 		lua_pushcclosure(L, destroyer<T>, 0);
 		lua_rawset(L, -3);
 
-		lua_settable(L, LUA_GLOBALSINDEX);
+		lua_setglobal(L, name);
 	}
 
 	// Tinker Class Inheritence
@@ -904,7 +895,7 @@ namespace lua_tinker
 		static const char* name(const char* name = NULL)
 		{
 			static char temp[256] = "";
-			if(name) strcpy_s(temp, name);
+			if(name) strcpy(temp, name);
 			return temp;
 		}
 	};
