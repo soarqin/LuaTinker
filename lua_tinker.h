@@ -24,7 +24,12 @@ namespace lua_tinker
 	void	dofile(lua_State *L, const char *filename);
 	void	dostring(lua_State *L, const char* buff);
 	void	dobuffer(lua_State *L, const char* buff, size_t sz);
-	
+
+	// class helper
+	int		meta_get(lua_State *L);
+	int		meta_set(lua_State *L);
+	void	push_meta(lua_State *L, const char* name);
+
 	// debug helpers
 	void	enum_stack(lua_State *L);
 	int		on_error(lua_State *L);
@@ -447,7 +452,7 @@ namespace lua_tinker
 	{
 		V T::*_var;
 		mem_var(V T::*val) : _var(val) {}
-		void get(lua_State *L)	{ push<if_<is_obj<V>::value,V&,V>::type>(L, read<T*>(L,1)->*(_var));	}
+		void get(lua_State *L)	{ push<typename if_<is_obj<V>::value,V&,V>::type>(L, read<T*>(L,1)->*(_var));	}
 		void set(lua_State *L)	{ read<T*>(L,1)->*(_var) = read<V>(L, 3);	}
 	};
 
@@ -796,11 +801,6 @@ namespace lua_tinker
 		lua_remove(L, errfunc);
 		return pop<RVal>(L);
 	}
-
-	// class helper
-	int meta_get(lua_State *L);
-	int meta_set(lua_State *L);
-	void push_meta(lua_State *L, const char* name);
 
 	// class init
 	template<typename T>
