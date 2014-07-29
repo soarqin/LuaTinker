@@ -10,6 +10,7 @@
 #define _LUA_TINKER_H_
 
 #include <new>
+#include <lua.hpp>
 #include <string.h>
 
 namespace lua_tinker

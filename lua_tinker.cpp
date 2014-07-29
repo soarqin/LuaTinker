@@ -6,17 +6,7 @@
 // 
 // please check Licence.txt file for licence and legal issues. 
 
-#include <iostream>
-
-extern "C" 
-{
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
-};
-
 #include "lua_tinker.h"
-
 
 /*---------------------------------------------------------------------------*/ 
 /* init                                                                      */ 
