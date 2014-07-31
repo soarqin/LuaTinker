@@ -105,10 +105,19 @@ namespace lua_tinker
 	no_type int_conv_tester (...); 
 	yes_type int_conv_tester (int_conv_type); 
 
+	no_type vfnd_ptr_tester (const volatile wchar_t *); 
 	no_type vfnd_ptr_tester (const volatile char *); 
-	no_type vfnd_ptr_tester (const volatile short *); 
-	no_type vfnd_ptr_tester (const volatile int *); 
-	no_type vfnd_ptr_tester (const volatile long *); 
+	no_type vfnd_ptr_tester (const volatile signed char *); 
+	no_type vfnd_ptr_tester (const volatile unsigned char *); 
+	no_type vfnd_ptr_tester (const volatile signed short *); 
+	no_type vfnd_ptr_tester (const volatile unsigned short *); 
+	no_type vfnd_ptr_tester (const volatile signed int *); 
+	no_type vfnd_ptr_tester (const volatile unsigned int *); 
+	no_type vfnd_ptr_tester (const volatile signed long *); 
+	no_type vfnd_ptr_tester (const volatile unsigned long *); 
+	no_type vfnd_ptr_tester (const volatile signed long long *); 
+	no_type vfnd_ptr_tester (const volatile unsigned long long *); 
+	no_type vfnd_ptr_tester (const volatile long double *); 
 	no_type vfnd_ptr_tester (const volatile double *); 
 	no_type vfnd_ptr_tester (const volatile float *); 
 	no_type vfnd_ptr_tester (const volatile bool *); 
