@@ -287,105 +287,87 @@ void lua_tinker::enum_stack(lua_State *L)
 		}
 	}
 }
- 
+
 /*---------------------------------------------------------------------------*/ 
 /* read                                                                      */ 
 /*---------------------------------------------------------------------------*/ 
 template<>
-char* lua_tinker::read(lua_State *L, int index)
+wchar_t lua_tinker::read(lua_State *L, int index)
 {
-	return (char*)lua_tostring(L, index);				
-}
-
-template<>
-const char* lua_tinker::read(lua_State *L, int index)
-{
-	return (const char*)lua_tostring(L, index);		
+	return (wchar_t)lua_tonumber(L, index);
 }
 
 template<>
 char lua_tinker::read(lua_State *L, int index)
 {
-	return (char)lua_tonumber(L, index);				
+	return (char)lua_tonumber(L, index);
+}
+
+template<>
+signed char lua_tinker::read(lua_State *L, int index)
+{
+	return (signed char)lua_tonumber(L, index);
 }
 
 template<>
 unsigned char lua_tinker::read(lua_State *L, int index)
 {
-	return (unsigned char)lua_tonumber(L, index);		
+	return (unsigned char)lua_tonumber(L, index);
 }
 
 template<>
-short lua_tinker::read(lua_State *L, int index)
+signed short lua_tinker::read(lua_State *L, int index)
 {
-	return (short)lua_tonumber(L, index);				
+	return (signed short)lua_tonumber(L, index);
 }
 
 template<>
 unsigned short lua_tinker::read(lua_State *L, int index)
 {
-	return (unsigned short)lua_tonumber(L, index);	
+	return (unsigned short)lua_tonumber(L, index);
 }
 
 template<>
-long lua_tinker::read(lua_State *L, int index)
+signed int lua_tinker::read(lua_State *L, int index)
 {
-	return (long)lua_tonumber(L, index);				
-}
-
-template<>
-unsigned long lua_tinker::read(lua_State *L, int index)
-{
-	return (unsigned long)lua_tonumber(L, index);		
-}
-
-template<>
-int lua_tinker::read(lua_State *L, int index)
-{
-	return (int)lua_tonumber(L, index);				
+	return (signed int)lua_tonumber(L, index);
 }
 
 template<>
 unsigned int lua_tinker::read(lua_State *L, int index)
 {
-	return (unsigned int)lua_tonumber(L, index);		
+	return (unsigned int)lua_tonumber(L, index);
 }
 
 template<>
-float lua_tinker::read(lua_State *L, int index)
+signed long lua_tinker::read(lua_State *L, int index)
 {
-	return (float)lua_tonumber(L, index);				
+#if defined (__LP64__)
+	return read<signed long long>(L, index);
+#else
+	return (signed long)lua_tonumber(L, index);
+#endif
 }
 
 template<>
-double lua_tinker::read(lua_State *L, int index)
+unsigned long lua_tinker::read(lua_State *L, int index)
 {
-	return (double)lua_tonumber(L, index);			
+#if defined (__LP64__)
+	return read<unsigned long long>(L, index);
+#else
+	return (unsigned long)lua_tonumber(L, index);
+#endif
 }
 
 template<>
-bool lua_tinker::read(lua_State *L, int index)
-{
-	if(lua_isboolean(L, index))
-		return lua_toboolean(L, index) != 0;				
-	else
-		return lua_tonumber(L, index) != 0;
-}
-
-template<>
-void lua_tinker::read(lua_State *L, int index)
-{
-	return;											
-}
-
-template<>
-long long lua_tinker::read(lua_State *L, int index)
+signed long long lua_tinker::read(lua_State *L, int index)
 {
 	if(lua_isnumber(L,index))
-		return (long long)lua_tonumber(L, index);
+		return (signed long long)lua_tonumber(L, index);
 	else
-		return *(long long*)lua_touserdata(L, index);
+		return *(signed long long*)lua_touserdata(L, index);
 }
+
 template<>
 unsigned long long lua_tinker::read(lua_State *L, int index)
 {
@@ -393,6 +375,51 @@ unsigned long long lua_tinker::read(lua_State *L, int index)
 		return (unsigned long long)lua_tonumber(L, index);
 	else
 		return *(unsigned long long*)lua_touserdata(L, index);
+}
+
+template<>
+long double lua_tinker::read(lua_State *L, int index)
+{
+	return (long double)lua_tonumber(L, index);
+}
+
+template<>
+double lua_tinker::read(lua_State *L, int index)
+{
+	return (double)lua_tonumber(L, index);
+}
+
+template<>
+float lua_tinker::read(lua_State *L, int index)
+{
+	return (float)lua_tonumber(L, index);
+}
+
+template<>
+bool lua_tinker::read(lua_State *L, int index)
+{
+	if(lua_isboolean(L, index))
+		return lua_toboolean(L, index) != 0;
+	else
+		return lua_tonumber(L, index) != 0;
+}
+
+template<>
+void lua_tinker::read(lua_State *L, int index)
+{
+	return;
+}
+
+template<>
+char* lua_tinker::read(lua_State *L, int index)
+{
+	return (char*)lua_tostring(L, index);
+}
+
+template<>
+const char* lua_tinker::read(lua_State *L, int index)
+{
+	return (const char*)lua_tostring(L, index);
 }
 
 template<>
@@ -405,102 +432,129 @@ lua_tinker::table lua_tinker::read(lua_State *L, int index)
 /* push                                                                      */ 
 /*---------------------------------------------------------------------------*/ 
 template<>
+void lua_tinker::push(lua_State *L, wchar_t ret)
+{
+	lua_pushnumber(L, ret);
+}
+
+template<>
 void lua_tinker::push(lua_State *L, char ret)
 {
-	lua_pushnumber(L, ret);						
+	lua_pushnumber(L, ret);
+}
+
+template<>
+void lua_tinker::push(lua_State *L, signed char ret)
+{
+	lua_pushnumber(L, ret);
 }
 
 template<>
 void lua_tinker::push(lua_State *L, unsigned char ret)
 {
-	lua_pushnumber(L, ret);						
+	lua_pushnumber(L, ret);
 }
 
 template<>
-void lua_tinker::push(lua_State *L, short ret)
+void lua_tinker::push(lua_State *L, signed short ret)
 {
-	lua_pushnumber(L, ret);						
+	lua_pushnumber(L, ret);
 }
 
 template<>
 void lua_tinker::push(lua_State *L, unsigned short ret)
 {
-	lua_pushnumber(L, ret);						
+	lua_pushnumber(L, ret);
 }
 
 template<>
-void lua_tinker::push(lua_State *L, long ret)
+void lua_tinker::push(lua_State *L, signed int ret)
 {
-	lua_pushnumber(L, ret);						
-}
-
-template<>
-void lua_tinker::push(lua_State *L, unsigned long ret)
-{
-	lua_pushnumber(L, ret);						
-}
-
-template<>
-void lua_tinker::push(lua_State *L, int ret)
-{
-	lua_pushnumber(L, ret);						
+	lua_pushnumber(L, ret);
 }
 
 template<>
 void lua_tinker::push(lua_State *L, unsigned int ret)
 {
-	lua_pushnumber(L, ret);						
+	lua_pushnumber(L, ret);
 }
 
 template<>
-void lua_tinker::push(lua_State *L, float ret)
+void lua_tinker::push(lua_State *L, signed long ret)
 {
-	lua_pushnumber(L, ret);						
+#if defined (__LP64__)
+	push(L, (signed long long)ret);
+#else
+	lua_pushnumber(L, ret);
+#endif
 }
 
 template<>
-void lua_tinker::push(lua_State *L, double ret)
+void lua_tinker::push(lua_State *L, unsigned long ret)
 {
-	lua_pushnumber(L, ret);						
+#if defined (__LP64__)
+	push(L, (unsigned long long)ret);
+#else
+	lua_pushnumber(L, ret);
+#endif
 }
 
 template<>
-void lua_tinker::push(lua_State *L, char* ret)
+void lua_tinker::push(lua_State *L, signed long long ret)
 {
-	lua_pushstring(L, ret);						
-}
-
-template<>
-void lua_tinker::push(lua_State *L, const char* ret)
-{
-	lua_pushstring(L, ret);						
-}
-
-template<>
-void lua_tinker::push(lua_State *L, bool ret)
-{
-	lua_pushboolean(L, ret);						
-}
-
-template<>
-void lua_tinker::push(lua_State *L, lua_value* ret)
-{
-	if(ret) ret->to_lua(L); else lua_pushnil(L);	
-}
-
-template<>
-void lua_tinker::push(lua_State *L, long long ret)			
-{ 
-	*(long long*)lua_newuserdata(L, sizeof(long long)) = ret;
+	*(signed long long*)lua_newuserdata(L, sizeof(signed long long)) = ret;
 	lua_getglobal(L, "__s64");
 	lua_setmetatable(L, -2);
 }
+
 template<>
 void lua_tinker::push(lua_State *L, unsigned long long ret)
 {
 	*(unsigned long long*)lua_newuserdata(L, sizeof(unsigned long long)) = ret;
 	lua_getglobal(L, "__u64");
 	lua_setmetatable(L, -2);
+}
+
+template<>
+void lua_tinker::push(lua_State *L, long double ret)
+{
+	lua_pushnumber(L, ret);
+}
+
+template<>
+void lua_tinker::push(lua_State *L, double ret)
+{
+	lua_pushnumber(L, ret);
+}
+
+template<>
+void lua_tinker::push(lua_State *L, float ret)
+{
+	lua_pushnumber(L, ret);
+}
+
+template<>
+void lua_tinker::push(lua_State *L, bool ret)
+{
+	lua_pushboolean(L, ret);
+}
+
+template<>
+void lua_tinker::push(lua_State *L, char* ret)
+{
+	lua_pushstring(L, ret);
+}
+
+template<>
+void lua_tinker::push(lua_State *L, const char* ret)
+{
+	lua_pushstring(L, ret);
+}
+
+template<>
+void lua_tinker::push(lua_State *L, lua_value* ret)
+{
+	if(ret) ret->to_lua(L); else lua_pushnil(L);
 }
 
 template<>

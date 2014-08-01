@@ -170,7 +170,7 @@ namespace lua_tinker
 	struct user2type { static T invoke(lua_State *L, int index) { return void2type<T>::invoke(lua_touserdata(L, index)); } };
 
 	template<typename T>
-	struct lua2enum { static T invoke(lua_State *L, int index) { return (T)(int)lua_tonumber(L, index); } };
+	struct lua2enum { static T invoke(lua_State *L, int index) { return (T)lua_tonumber(L, index); } };
 
 	template<typename T>
 	struct lua2object
@@ -239,7 +239,7 @@ namespace lua_tinker
 	struct ref2lua { static void invoke(lua_State *L, T& input){ new(lua_newuserdata(L, sizeof(ref2user<T>))) ref2user<T>(input); } };
 
 	template<typename T>
-	struct enum2lua { static void invoke(lua_State *L, T val) { lua_pushnumber(L, (int)val); } };
+	struct enum2lua { static void invoke(lua_State *L, T val) { lua_pushnumber(L, (lua_Number)val); } };
 
 	template<typename T>
 	struct object2lua 
@@ -277,46 +277,52 @@ namespace lua_tinker
 
 	// read a value from lua stack 
 	template<typename T>  
-	T read(lua_State *L, int index)				{ return lua2type<T>(L, index); }
+	T read(lua_State *L, int index) { return lua2type<T>(L, index); }
 
-	template<>	char*				read(lua_State *L, int index);
-	template<>	const char*			read(lua_State *L, int index);
+	template<>	wchar_t				read(lua_State *L, int index);
 	template<>	char				read(lua_State *L, int index);
+	template<>	signed char			read(lua_State *L, int index);
 	template<>	unsigned char		read(lua_State *L, int index);
-	template<>	short				read(lua_State *L, int index);
+	template<>	signed short		read(lua_State *L, int index);
 	template<>	unsigned short		read(lua_State *L, int index);
-	template<>	long				read(lua_State *L, int index);
-	template<>	unsigned long		read(lua_State *L, int index);
-	template<>	int					read(lua_State *L, int index);
+	template<>	signed int			read(lua_State *L, int index);
 	template<>	unsigned int		read(lua_State *L, int index);
-	template<>	float				read(lua_State *L, int index);
+	template<>	signed long			read(lua_State *L, int index);
+	template<>	unsigned long		read(lua_State *L, int index);
+	template<>	signed long long	read(lua_State *L, int index);
+	template<>	unsigned long long	read(lua_State *L, int index);
+	template<>	long double			read(lua_State *L, int index);
 	template<>	double				read(lua_State *L, int index);
+	template<>	float				read(lua_State *L, int index);
 	template<>	bool				read(lua_State *L, int index);
 	template<>	void				read(lua_State *L, int index);
-	template<>	long long			read(lua_State *L, int index);
-	template<>	unsigned long long	read(lua_State *L, int index);
+	template<>	char*				read(lua_State *L, int index);
+	template<>	const char*			read(lua_State *L, int index);
 	template<>	table				read(lua_State *L, int index);
 
 	// push a value to lua stack 
 	template<typename T>  
-	void push(lua_State *L, T ret)					{ type2lua<T>(L, ret); }
-	
+	void push(lua_State *L, T ret) { type2lua<T>(L, ret); }
+
+	template<>	void push(lua_State *L, wchar_t ret);
 	template<>	void push(lua_State *L, char ret);
+	template<>	void push(lua_State *L, signed char ret);
 	template<>	void push(lua_State *L, unsigned char ret);
-	template<>	void push(lua_State *L, short ret);
+	template<>	void push(lua_State *L, signed short ret);
 	template<>	void push(lua_State *L, unsigned short ret);
-	template<>	void push(lua_State *L, long ret);
-	template<>	void push(lua_State *L, unsigned long ret);
-	template<>	void push(lua_State *L, int ret);
+	template<>	void push(lua_State *L, signed int ret);
 	template<>	void push(lua_State *L, unsigned int ret);
-	template<>	void push(lua_State *L, float ret);
+	template<>	void push(lua_State *L, signed long ret);
+	template<>	void push(lua_State *L, unsigned long ret);
+	template<>	void push(lua_State *L, signed long long ret);
+	template<>	void push(lua_State *L, unsigned long long ret);
+	template<>	void push(lua_State *L, long double ret);
 	template<>	void push(lua_State *L, double ret);
+	template<>	void push(lua_State *L, float ret);
+	template<>	void push(lua_State *L, bool ret);
 	template<>	void push(lua_State *L, char* ret);
 	template<>	void push(lua_State *L, const char* ret);
-	template<>	void push(lua_State *L, bool ret);
 	template<>	void push(lua_State *L, lua_value* ret);
-	template<>	void push(lua_State *L, long long ret);
-	template<>	void push(lua_State *L, unsigned long long ret);
 	template<>	void push(lua_State *L, table ret);
 
 	// pop a value from lua stack
