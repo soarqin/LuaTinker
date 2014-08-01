@@ -75,25 +75,28 @@ namespace lua_tinker
 
 	template<typename A>
 	struct class_type { typedef typename remove_const<typename base_type<A>::type>::type type; };
-	
+
 	template<typename A>
 	struct is_obj { static const bool value = true; };
+	template<> struct is_obj<wchar_t>				{ static const bool value = false; };
 	template<> struct is_obj<char>					{ static const bool value = false; };
+	template<> struct is_obj<signed char>			{ static const bool value = false; };
 	template<> struct is_obj<unsigned char>			{ static const bool value = false; };
-	template<> struct is_obj<short>					{ static const bool value = false; };
+	template<> struct is_obj<signed short>			{ static const bool value = false; };
 	template<> struct is_obj<unsigned short>		{ static const bool value = false; };
-	template<> struct is_obj<long>					{ static const bool value = false; };
-	template<> struct is_obj<unsigned long>			{ static const bool value = false; };
-	template<> struct is_obj<int>					{ static const bool value = false; };
+	template<> struct is_obj<signed int>			{ static const bool value = false; };
 	template<> struct is_obj<unsigned int>			{ static const bool value = false; };
-	template<> struct is_obj<float>					{ static const bool value = false; };
+	template<> struct is_obj<signed long>			{ static const bool value = false; };
+	template<> struct is_obj<unsigned long>			{ static const bool value = false; };
+	template<> struct is_obj<signed long long>		{ static const bool value = false; };
+	template<> struct is_obj<unsigned long long>	{ static const bool value = false; };
+	template<> struct is_obj<long double>			{ static const bool value = false; };
 	template<> struct is_obj<double>				{ static const bool value = false; };
+	template<> struct is_obj<float>					{ static const bool value = false; };
+	template<> struct is_obj<bool>					{ static const bool value = false; };
 	template<> struct is_obj<char*>					{ static const bool value = false; };
 	template<> struct is_obj<const char*>			{ static const bool value = false; };
-	template<> struct is_obj<bool>					{ static const bool value = false; };
 	template<> struct is_obj<lua_value*>			{ static const bool value = false; };
-	template<> struct is_obj<long long>				{ static const bool value = false; };
-	template<> struct is_obj<unsigned long long>	{ static const bool value = false; };
 	template<> struct is_obj<table>					{ static const bool value = false; };
 
 	/////////////////////////////////
