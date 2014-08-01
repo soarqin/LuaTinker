@@ -20,6 +20,7 @@ namespace lua_tinker
 
 	void	init_s64(lua_State *L);
 	void	init_u64(lua_State *L);
+	void	init_f80(lua_State *L);
 
 	// string-buffer excution
 	void	dofile(lua_State *L, const char *filename);
