@@ -317,28 +317,19 @@ unsigned long lua_tinker::read(lua_State *L, int index)
 template<>
 signed long long lua_tinker::read(lua_State *L, int index)
 {
-	if(lua_isnumber(L,index))
-		return (signed long long)lua_tonumber(L, index);
-	else
-		return *(signed long long*)lua_touserdata(L, index);
+	return (signed long long)lua_tonumber(L, index);
 }
 
 template<>
 unsigned long long lua_tinker::read(lua_State *L, int index)
 {
-	if(lua_isnumber(L,index))
-		return (unsigned long long)lua_tonumber(L, index);
-	else
-		return *(unsigned long long*)lua_touserdata(L, index);
+	return (unsigned long long)lua_tonumber(L, index);
 }
 
 template<>
 long double lua_tinker::read(lua_State *L, int index)
 {
-	if(lua_isnumber(L,index))
-		return (long double)lua_tonumber(L, index);
-	else
-		return *(long double*)lua_touserdata(L, index);
+	return (long double)lua_tonumber(L, index);
 }
 
 template<>
@@ -452,25 +443,19 @@ void lua_tinker::push(lua_State *L, unsigned long ret)
 template<>
 void lua_tinker::push(lua_State *L, signed long long ret)
 {
-	*(signed long long*)lua_newuserdata(L, sizeof(signed long long)) = ret;
-	lua_getglobal(L, "__s64");
-	lua_setmetatable(L, -2);
+	lua_pushnumber(L, ret);
 }
 
 template<>
 void lua_tinker::push(lua_State *L, unsigned long long ret)
 {
-	*(unsigned long long*)lua_newuserdata(L, sizeof(unsigned long long)) = ret;
-	lua_getglobal(L, "__u64");
-	lua_setmetatable(L, -2);
+	lua_pushnumber(L, ret);
 }
 
 template<>
 void lua_tinker::push(lua_State *L, long double ret)
 {
-	*(long double*)lua_newuserdata(L, sizeof(long double)) = ret;
-	lua_getglobal(L, "__f80");
-	lua_setmetatable(L, -2);
+	lua_pushnumber(L, ret);
 }
 
 template<>
