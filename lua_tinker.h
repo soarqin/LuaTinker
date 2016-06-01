@@ -204,21 +204,8 @@ namespace lua_tinker
 	{
 		val2user() : user(new T) {}
 
-		template<typename T1>
-		val2user(T1 t1) : user(new T(t1)) {}
-
-		template<typename T1, typename T2>
-		val2user(T1 t1, T2 t2) : user(new T(t1, t2)) {}
-
-		template<typename T1, typename T2, typename T3>
-		val2user(T1 t1, T2 t2, T3 t3) : user(new T(t1, t2, t3)) {}
-
-		template<typename T1, typename T2, typename T3, typename T4>
-		val2user(T1 t1, T2 t2, T3 t3, T4 t4) : user(new T(t1, t2, t3,t4)) {}
-
-		template<typename T1, typename T2, typename T3, typename T4, typename T5>
-		val2user(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5) : user(new T(t1, t2, t3,t4,t5)) {}
-
+		template<typename... T1>
+		val2user(const T1&... t1) : user(new T(t1...)) {}
 		~val2user() { delete ((T*)m_p); }
 	};
 
@@ -430,34 +417,10 @@ namespace lua_tinker
 		lua_pushcclosure(L, functor<RVal>::invoke, 1);
 	}
 
-	template<typename RVal, typename T1> 
-	void push_functor(lua_State *L, RVal (*func)(T1))
+	template<typename RVal, typename... T1> 
+	void push_functor(lua_State *L, RVal (*func)(T1...))
 	{ 
-		lua_pushcclosure(L, functor<RVal,T1>::invoke, 1);
-	}
-
-	template<typename RVal, typename T1, typename T2> 
-	void push_functor(lua_State *L, RVal (*func)(T1,T2))
-	{ 
-		lua_pushcclosure(L, functor<RVal,T1,T2>::invoke, 1);
-	}
-
-	template<typename RVal, typename T1, typename T2, typename T3> 
-	void push_functor(lua_State *L, RVal (*func)(T1,T2,T3))
-	{ 
-		lua_pushcclosure(L, functor<RVal,T1,T2,T3>::invoke, 1);
-	}
-
-	template<typename RVal, typename T1, typename T2, typename T3, typename T4> 
-	void push_functor(lua_State *L, RVal (*func)(T1,T2,T3,T4))
-	{ 
-		lua_pushcclosure(L, functor<RVal,T1,T2,T3,T4>::invoke, 1);
-	}
-
-	template<typename RVal, typename T1, typename T2, typename T3, typename T4, typename T5> 
-	void push_functor(lua_State *L, RVal (*func)(T1,T2,T3,T4,T5))
-	{ 
-		lua_pushcclosure(L, functor<RVal,T1,T2,T3,T4,T5>::invoke, 1);
+		lua_pushcclosure(L, functor<RVal,T1...>::invoke, 1);
 	}
 
 	// member variable
@@ -577,64 +540,16 @@ namespace lua_tinker
 		lua_pushcclosure(L, mem_functor<RVal,T>::invoke, 1); 
 	}
 
-	template<typename RVal, typename T, typename T1>
-	void push_functor(lua_State *L, RVal (T::*func)(T1)) 
+	template<typename RVal, typename T, typename... T1>
+	void push_functor(lua_State *L, RVal (T::*func)(T1...)) 
 	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1>::invoke, 1); 
+		lua_pushcclosure(L, mem_functor<RVal,T,T1...>::invoke, 1); 
 	}
 
-	template<typename RVal, typename T, typename T1>
-	void push_functor(lua_State *L, RVal (T::*func)(T1) const) 
+	template<typename RVal, typename T, typename... T1>
+	void push_functor(lua_State *L, RVal (T::*func)(T1...) const) 
 	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1>::invoke, 1); 
-	}
-
-	template<typename RVal, typename T, typename T1, typename T2>
-	void push_functor(lua_State *L, RVal (T::*func)(T1,T2)) 
-	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1,T2>::invoke, 1); 
-	}
-
-	template<typename RVal, typename T, typename T1, typename T2>
-	void push_functor(lua_State *L, RVal (T::*func)(T1,T2) const) 
-	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1,T2>::invoke, 1); 
-	}
-
-	template<typename RVal, typename T, typename T1, typename T2, typename T3>
-	void push_functor(lua_State *L, RVal (T::*func)(T1,T2,T3)) 
-	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1,T2,T3>::invoke, 1); 
-	}
-
-	template<typename RVal, typename T, typename T1, typename T2, typename T3>
-	void push_functor(lua_State *L, RVal (T::*func)(T1,T2,T3) const) 
-	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1,T2,T3>::invoke, 1); 
-	}
-
-	template<typename RVal, typename T, typename T1, typename T2, typename T3, typename T4>
-	void push_functor(lua_State *L, RVal (T::*func)(T1,T2,T3,T4)) 
-	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1,T2,T3,T4>::invoke, 1); 
-	}
-
-	template<typename RVal, typename T, typename T1, typename T2, typename T3, typename T4>
-	void push_functor(lua_State *L, RVal (T::*func)(T1,T2,T3,T4) const) 
-	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1,T2,T3,T4>::invoke, 1); 
-	}
-
-	template<typename RVal, typename T, typename T1, typename T2, typename T3, typename T4, typename T5>
-	void push_functor(lua_State *L, RVal (T::*func)(T1,T2,T3,T4,T5)) 
-	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1,T2,T3,T4,T5>::invoke, 1); 
-	}
-
-	template<typename RVal, typename T, typename T1, typename T2, typename T3, typename T4, typename T5>
-	void push_functor(lua_State *L, RVal (T::*func)(T1,T2,T3,T4,T5) const) 
-	{ 
-		lua_pushcclosure(L, mem_functor<RVal,T,T1,T2,T3,T4,T5>::invoke, 1); 
+		lua_pushcclosure(L, mem_functor<RVal,T,T1...>::invoke, 1); 
 	}
 
 	// constructor

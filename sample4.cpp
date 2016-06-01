@@ -15,7 +15,7 @@ extern "C"
 int main()
 {
 	// Lua 를 초기화 한다.
-	lua_State* L = lua_open();
+	lua_State* L = luaL_newstate();
 
 	// Lua 기본 함수들을 로드한다.- print() 사용
 	luaopen_base(L);
